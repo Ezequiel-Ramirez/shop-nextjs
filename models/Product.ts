@@ -40,6 +40,7 @@ const productSchema = new Schema(
 );
 
 //TODO: CREAR INDICE DE MONGO
+productSchema.index({ title: "text", tags: "text" });
 
 const Product: Model<IProduct> = mongoose.models.Product || model('Product', productSchema);
 
