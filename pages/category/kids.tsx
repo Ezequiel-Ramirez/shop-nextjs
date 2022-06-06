@@ -1,23 +1,23 @@
 import { Typography } from "@mui/material";
 import type { NextPage } from "next";
-import { ShopLayout } from "../components/layauts";
-import { ProductList } from "../components/products";
-import { useProducts } from "../hooks";
+import { ShopLayout } from "../../components/layauts";
+import { ProductList } from "../../components/products";
+import { useProducts } from "../../hooks";
 
-const Home: NextPage = () => {
-    const { products, isError, isLoading } = useProducts("/products");
+const Kids: NextPage = () => {
+    const { products, isError, isLoading } = useProducts("/products?gender=kid");
 
     return (
         <ShopLayout
-            title={"Shop-Nextjs - Home"}
-            pageDescription={"Encuentre los mejores productos de Shop aqui"}
+            title={"Shop-Nextjs - Kids"}
+            pageDescription={"Encuentre los mejores productos Kids aqui"}
             imageFullUrl={"https://source.unsplash.com/random"}
         >
             <Typography variant="h1" component="h1">
-                Tienda
+                Tienda - Kids
             </Typography>
             <Typography variant="h2" component="h2" sx={{ mb: 1 }}>
-                Todos los productos
+                Productos para niños/niñas
             </Typography>
             {isLoading ? (
                 <Typography variant="h3" component="h3">
@@ -30,4 +30,4 @@ const Home: NextPage = () => {
     );
 };
 
-export default Home;
+export default Kids;
