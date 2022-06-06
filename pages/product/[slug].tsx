@@ -1,6 +1,6 @@
 import { Button, Chip, Grid, Typography } from "@mui/material";
 import { Box } from "@mui/system";
-import { NextPage, GetServerSideProps } from "next";
+import { NextPage, GetServerSideProps, GetStaticPaths, GetStaticProps } from "next";
 import React from "react";
 import { ShopLayout } from "../../components/layauts";
 import { ProductSlideshow, SizeSelector } from "../../components/products";
@@ -71,9 +71,9 @@ const ProductPage:NextPage<Props> = ({product}) => {
         </ShopLayout>
     );
 };
-export default ProductPage;
 
-export const getServerSideProps: GetServerSideProps = async ({params}) => {
+//getServerSideProps normalmente es una función que se ejecuta en el servidor
+/* export const getServerSideProps: GetServerSideProps = async ({params}) => {
     const {slug = ''} = params as {slug:string};
     const product = await dbProducts.getProductBySlug(slug);
 
@@ -90,5 +90,44 @@ export const getServerSideProps: GetServerSideProps = async ({params}) => {
             product,
         },
     };
-};
+}; */
 
+//Ahora mejor usar getStaticPaths para obtener los productos y sus slugs y te genera las paginas de forma estatica en el build
+//getStaticPaths
+ export const getStaticPaths: GetStaticPaths = async (ctx) => {
+    const productsSlugs = await dbProducts.getAllProductSlugs();
+    return {
+        paths: productsSlugs.map((obj) => ({
+            params: {
+                slug: obj.slug,
+            },
+        })),
+        fallback: 'blocking',      
+}
+}
+
+//getStaticProps para obtener los productos y sus slugs y te genera las paginas de forma estatica en el build en caso de que no exista el producto
+//getStaticProps
+
+ export const getStaticProps: GetStaticProps = async ({params}) => {
+    const {slug = ''} = params as {slug:string};
+    const product = await dbProducts.getProductBySlug(slug);
+
+    if (!product) {
+        return {
+            redirect: {
+                destination: '/',
+                permanent: false,
+            },
+        };
+    }
+    return {
+        props: {
+            product,
+        },
+        revalidate: 60 * 60 * 24,
+    };
+} 
+
+
+export default ProductPage;
