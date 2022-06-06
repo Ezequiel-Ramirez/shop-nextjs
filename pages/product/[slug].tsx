@@ -1,14 +1,21 @@
 import { Button, Chip, Grid, Typography } from "@mui/material";
 import { Box } from "@mui/system";
+import { NextPage, GetServerSideProps } from "next";
 import React from "react";
 import { ShopLayout } from "../../components/layauts";
 import { ProductSlideshow, SizeSelector } from "../../components/products";
 import { ItemCounter } from "../../components/ui";
-import { initialData } from "../../database/products";
+import { dbProducts } from "../../database";
+import { IProduct } from "../../interfaces";
 
-const product = initialData.products[0];
 
-const ProductPage = () => {
+interface Props {
+    product: IProduct;
+}
+
+const ProductPage:NextPage<Props> = ({product}) => {
+
+    
     return (
         <ShopLayout
             title={product.title}
@@ -64,5 +71,24 @@ const ProductPage = () => {
         </ShopLayout>
     );
 };
-
 export default ProductPage;
+
+export const getServerSideProps: GetServerSideProps = async ({params}) => {
+    const {slug = ''} = params as {slug:string};
+    const product = await dbProducts.getProductBySlug(slug);
+
+    if (!product) {
+        return {
+            redirect: {
+                destination: '/',
+                permanent: false,
+            },
+        };
+    }
+    return {
+        props: {
+            product,
+        },
+    };
+};
+
