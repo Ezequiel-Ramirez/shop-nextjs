@@ -58,9 +58,12 @@ export const SideMenu = () => {
                 <List>
                     <ListItem>
                         <Input
+                            autoFocus={true}
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
-                            onKeyPress={(e) => e.key === "Enter" && handleSearch()}
+                            onKeyPress={(e) =>
+                                e.key === "Enter" && handleSearch()
+                            }
                             type="text"
                             placeholder="Buscar..."
                             endAdornment={

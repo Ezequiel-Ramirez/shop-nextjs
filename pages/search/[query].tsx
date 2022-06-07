@@ -25,12 +25,12 @@ const SearchPage: NextPage<Props> = ({ products, foundProducts, query }) => {
 
             {foundProducts ? (
                 <>
-                    <Typography variant="h2" component="h2" sx={{ mb: 1 }}>
+                    <Typography variant="h2" component="h2" sx={{ mb: 1 }} textTransform='capitalize'>
                         {products.length} resultados para {query}.
                     </Typography>
                 </>
             ) : (
-                <Typography variant="h2" component="h2" sx={{ ml: 1 }}>
+                <Typography variant="h2" component="h2" sx={{ ml: 1 }} textTransform='capitalize'>
                     No se encontraron resultados para: {query}.
                 </Typography>
             )}
