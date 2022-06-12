@@ -3,6 +3,7 @@ import {
     Card,
     CardActionArea,
     CardMedia,
+    Chip,
     Grid,
     Link,
     Typography,
@@ -33,9 +34,25 @@ export const ProductCard: FC<Props> = ({ product }) => {
             md={4}
         >
             <Card>
-                <NextLink href={`/product/${product.slug}`} passHref prefetch={false}>
+                <NextLink
+                    href={`/product/${product.slug}`}
+                    passHref
+                    prefetch={false}
+                >
                     <Link>
                         <CardActionArea>
+                            <Chip
+                                color="primary"
+                                label="No hay stock"
+                                sx={{
+                                    position: "absolute",
+                                    top: "10px",
+                                    left: "10px",
+                                    zIndex: "99",
+                                    display:
+                                        product.inStock === 0 ? "flex" : "none",
+                                }}
+                            />
                             <CardMedia
                                 component="img"
                                 image={productImage}
@@ -47,7 +64,10 @@ export const ProductCard: FC<Props> = ({ product }) => {
                     </Link>
                 </NextLink>
             </Card>
-            <Box sx={{ mt: 1, display: isImageLoaded ? 'block' : 'none' }} className="fadeIn">
+            <Box
+                sx={{ mt: 1, display: isImageLoaded ? "block" : "none" }}
+                className="fadeIn"
+            >
                 <Typography fontWeight={700}>{product.title}</Typography>
                 <Typography fontWeight={500}>{`$${product.price}`}</Typography>
             </Box>

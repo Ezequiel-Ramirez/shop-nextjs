@@ -3,7 +3,7 @@ import type { AppProps } from "next/app";
 import { ThemeProvider } from "@mui/material";
 import { lightTheme } from "../themes";
 import { SWRConfig } from "swr";
-import { UiProvider } from "../context";
+import { CartProvider, UiProvider } from "../context";
 
 function MyApp({ Component, pageProps }: AppProps) {
     return (
@@ -13,12 +13,14 @@ function MyApp({ Component, pageProps }: AppProps) {
                     fetch(resource, init).then((res) => res.json()),
             }}
         >
+            <CartProvider cart={[]}>
             <UiProvider isMenuOpen={false}>
             <ThemeProvider theme={lightTheme}>
                 <Component {...pageProps} />
             </ThemeProvider>
 
             </UiProvider>
+            </CartProvider>
         </SWRConfig>
     );
 }

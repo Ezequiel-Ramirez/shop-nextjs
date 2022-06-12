@@ -1,21 +1,41 @@
 import { Button, Chip, Grid, Typography } from "@mui/material";
 import { Box } from "@mui/system";
-import { NextPage, GetServerSideProps, GetStaticPaths, GetStaticProps } from "next";
-import React from "react";
+import {
+    NextPage,
+    GetServerSideProps,
+    GetStaticPaths,
+    GetStaticProps,
+} from "next";
+import React, { useState } from "react";
 import { ShopLayout } from "../../components/layauts";
 import { ProductSlideshow, SizeSelector } from "../../components/products";
 import { ItemCounter } from "../../components/ui";
 import { dbProducts } from "../../database";
-import { IProduct } from "../../interfaces";
-
+import { ICartProduct, IProduct, ISize } from "../../interfaces";
 
 interface Props {
     product: IProduct;
 }
 
-const ProductPage:NextPage<Props> = ({product}) => {
+const ProductPage: NextPage<Props> = ({ product }) => {
+    const [tempCartProduct, setTempCartProduct] = useState<ICartProduct>({
+        _id: product._id,
+        image: product.images[0],
+        price: product.price,
+        size: undefined,
+        slug: product.slug,
+        title: product.title,
+        gender: product.gender,
+        quantity: 1,
+    });
 
-    
+    const selectedSize = (size: ISize) => {
+        setTempCartProduct((currentProduct) => ({
+            ...currentProduct,
+            size,
+        }));
+    };
+
     return (
         <ShopLayout
             title={product.title}
@@ -25,9 +45,7 @@ const ProductPage:NextPage<Props> = ({product}) => {
             <Grid container spacing={3}>
                 <Grid item xs={12} sm={7}>
                     {/* slideshow */}
-                    <ProductSlideshow
-                    images={product.images}
-                    />
+                    <ProductSlideshow images={product.images} />
                 </Grid>
                 <Grid item xs={12} sm={5}>
                     <Box display="flex" flexDirection="column">
@@ -47,14 +65,26 @@ const ProductPage:NextPage<Props> = ({product}) => {
                             {/* itemcounter */}
                             <ItemCounter />
                             <SizeSelector
-                            //selectedSize={product.sizes[0]}
-                            sizes={product.sizes}
+                                //selectedSize={product.sizes[0]}
+                                sizes={product.sizes}
+                                selectedSize={tempCartProduct.size}
+                                onSelectedSize={selectedSize}
                             />
                         </Box>
                         {/* agregar al carrito */}
-                        <Button color="secondary" className="circular-btn">
-                            Agregar al Carrito
-                        </Button>
+                        {product.inStock > 0 ? (
+                            <Button color="secondary" className="circular-btn">
+                                {tempCartProduct.size
+                                    ? "Agregar al carrito"
+                                    : "Seleccione un talle"}
+                            </Button>
+                        ) : (
+                            <Chip
+                                color="error"
+                                label="No hay stock"
+                                variant="outlined"
+                            />
+                        )}
                         {/* <Chip label='No hay disponibles' color='error' variant="outlined" /> */}
                         {/* descripción */}
                         <Box sx={{ mt: 3 }}>
@@ -94,7 +124,7 @@ const ProductPage:NextPage<Props> = ({product}) => {
 
 //Ahora mejor usar getStaticPaths para obtener los productos y sus slugs y te genera las paginas de forma estatica en el build
 //getStaticPaths
- export const getStaticPaths: GetStaticPaths = async (ctx) => {
+export const getStaticPaths: GetStaticPaths = async (ctx) => {
     const productsSlugs = await dbProducts.getAllProductSlugs();
     return {
         paths: productsSlugs.map((obj) => ({
@@ -102,21 +132,21 @@ const ProductPage:NextPage<Props> = ({product}) => {
                 slug: obj.slug,
             },
         })),
-        fallback: 'blocking',      
-}
-}
+        fallback: "blocking",
+    };
+};
 
 //getStaticProps para obtener los productos y sus slugs y te genera las paginas de forma estatica en el build en caso de que no exista el producto
 //getStaticProps
 
- export const getStaticProps: GetStaticProps = async ({params}) => {
-    const {slug = ''} = params as {slug:string};
+export const getStaticProps: GetStaticProps = async ({ params }) => {
+    const { slug = "" } = params as { slug: string };
     const product = await dbProducts.getProductBySlug(slug);
 
     if (!product) {
         return {
             redirect: {
-                destination: '/',
+                destination: "/",
                 permanent: false,
             },
         };
@@ -127,7 +157,6 @@ const ProductPage:NextPage<Props> = ({product}) => {
         },
         revalidate: 60 * 60 * 24,
     };
-} 
-
+};
 
 export default ProductPage;
