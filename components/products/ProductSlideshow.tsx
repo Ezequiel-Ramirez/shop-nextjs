@@ -1,6 +1,7 @@
-import React, { FC } from "react";
+import { FC } from "react";
 import { Slide } from "react-slideshow-image";
-import 'react-slideshow-image/dist/styles.css'
+
+import "react-slideshow-image/dist/styles.css";
 import styles from "./ProductSlideshow.module.css";
 
 interface Props {
@@ -13,7 +14,7 @@ export const ProductSlideshow: FC<Props> = ({ images }) => {
             {images.map((image) => {
                 const url = `/products/${image}`;
                 return (
-                    <div className={styles['each-slide']} key={url}>
+                    <div className={styles["each-slide"]} key={image}>
                         <div
                             style={{
                                 backgroundImage: `url(${url})`,

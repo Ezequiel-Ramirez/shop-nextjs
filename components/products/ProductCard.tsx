@@ -1,16 +1,17 @@
+import { FC, useMemo, useState } from "react";
+import NextLink from "next/link";
 import {
-    Box,
+    Grid,
     Card,
     CardActionArea,
     CardMedia,
-    Chip,
-    Grid,
-    Link,
+    Box,
     Typography,
+    Link,
+    Chip,
 } from "@mui/material";
-import { FC, useMemo, useState } from "react";
+
 import { IProduct } from "../../interfaces";
-import NextLink from "next/link";
 
 interface Props {
     product: IProduct;
@@ -19,19 +20,20 @@ interface Props {
 export const ProductCard: FC<Props> = ({ product }) => {
     const [isHovered, setIsHovered] = useState(false);
     const [isImageLoaded, setIsImageLoaded] = useState(false);
+
     const productImage = useMemo(() => {
         return isHovered
             ? `/products/${product.images[1]}`
             : `/products/${product.images[0]}`;
     }, [isHovered, product.images]);
+
     return (
         <Grid
-            onMouseEnter={() => setIsHovered(true)}
-            onMouseLeave={() => setIsHovered(false)}
             item
             xs={6}
             sm={4}
-            md={4}
+            onMouseEnter={() => setIsHovered(true)}
+            onMouseLeave={() => setIsHovered(false)}
         >
             <Card>
                 <NextLink
@@ -41,29 +43,31 @@ export const ProductCard: FC<Props> = ({ product }) => {
                 >
                     <Link>
                         <CardActionArea>
-                            <Chip
-                                color="primary"
-                                label="No hay stock"
-                                sx={{
-                                    position: "absolute",
-                                    top: "10px",
-                                    left: "10px",
-                                    zIndex: "99",
-                                    display:
-                                        product.inStock === 0 ? "flex" : "none",
-                                }}
-                            />
+                            {product.inStock === 0 && (
+                                <Chip
+                                    color="primary"
+                                    label="No hay disponibles"
+                                    sx={{
+                                        position: "absolute",
+                                        zIndex: 99,
+                                        top: "10px",
+                                        left: "10px",
+                                    }}
+                                />
+                            )}
+
                             <CardMedia
                                 component="img"
+                                className="fadeIn"
                                 image={productImage}
                                 alt={product.title}
-                                className="fadeIn"
                                 onLoad={() => setIsImageLoaded(true)}
                             />
                         </CardActionArea>
                     </Link>
                 </NextLink>
             </Card>
+
             <Box
                 sx={{ mt: 1, display: isImageLoaded ? "block" : "none" }}
                 className="fadeIn"

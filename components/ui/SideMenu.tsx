@@ -1,3 +1,5 @@
+import { useContext, useState } from "react";
+
 import {
     Box,
     Divider,
@@ -23,20 +25,19 @@ import {
     SearchOutlined,
     VpnKeyOutlined,
 } from "@mui/icons-material";
-import { useContext, useState } from "react";
-import { UiContext } from "../../context";
+
+import { UiContext } from "../../context/ui/UiContext";
 import { useRouter } from "next/router";
 
 export const SideMenu = () => {
-    const { isMenuOpen, toggleSideMenu } = useContext(UiContext);
     const router = useRouter();
+    const { isMenuOpen, toggleSideMenu } = useContext(UiContext);
 
-    const [searchQuery, setSearchQuery] = useState("");
+    const [searchTerm, setSearchTerm] = useState("");
 
-    const handleSearch = () => {
-        if (searchQuery.trim().length === 0) return;
-        navigateTo(`/search/${searchQuery}`);
-        setSearchQuery("");
+    const onSearchTerm = () => {
+        if (searchTerm.trim().length === 0) return;
+        navigateTo(`/search/${searchTerm}`);
     };
 
     const navigateTo = (url: string) => {
@@ -58,17 +59,17 @@ export const SideMenu = () => {
                 <List>
                     <ListItem>
                         <Input
-                            autoFocus={true}
-                            value={searchQuery}
-                            onChange={(e) => setSearchQuery(e.target.value)}
+                            autoFocus
+                            value={searchTerm}
+                            onChange={(e) => setSearchTerm(e.target.value)}
                             onKeyPress={(e) =>
-                                e.key === "Enter" && handleSearch()
+                                e.key === "Enter" ? onSearchTerm() : null
                             }
                             type="text"
                             placeholder="Buscar..."
                             endAdornment={
                                 <InputAdornment position="end">
-                                    <IconButton onClick={handleSearch}>
+                                    <IconButton onClick={onSearchTerm}>
                                         <SearchOutlined />
                                     </IconButton>
                                 </InputAdornment>
@@ -115,7 +116,7 @@ export const SideMenu = () => {
                     <ListItem
                         button
                         sx={{ display: { xs: "", sm: "none" } }}
-                        onClick={() => navigateTo("/category/kids")}
+                        onClick={() => navigateTo("/category/kid")}
                     >
                         <ListItemIcon>
                             <EscalatorWarningOutlined />
